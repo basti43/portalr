@@ -87,19 +87,11 @@ abundance.adjustable <- function(path = '~', level="Site",type="Rodents", adj = 
       #   select(treatment, n) %>%
       #   group_by(treatment) %>%
       #   summarize(usual.n = round(mean(n))) %>%
-      # Potential to go ahead and multiply by how many plots are *usually* trapped of that treatment
-      # usual.trapping = plot.treatments.trapped %>%
-      #   select(treatment, n) %>%
-      #   group_by(treatment) %>%
-      #   summarize(usual.n = ceiling(mean(n))) %>%
       #   ungroup()
       #
       # abundances = abundances %>%
       #   left_join(usual.trapping, by = 'treatment') %>%
       #   mutate(abundance.adj = round(abundance.perplot * usual.n))
-=======
-      #   mutate(abundance.adj = round(abundance.perplot * usual.n)) %>%
-      #   select()
     }
   }
 
