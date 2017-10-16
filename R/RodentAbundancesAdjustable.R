@@ -82,16 +82,29 @@ abundance.adjustable <- function(path = '~', level="Site",type="Rodents", adj = 
         dplyr::left_join(plot.treatments.trapped, by = c('period', 'treatment')) %>%
         dplyr::mutate(abundance.perplot = abundance / n)
 
+<<<<<<< HEAD
       # Potential to multiply by how many plots are *usually* trapped of that treatment
       # usual.trapping = plot.treatments.trapped %>%
       #   select(treatment, n) %>%
       #   group_by(treatment) %>%
       #   summarize(usual.n = round(mean(n))) %>%
+=======
+      # Potential to go ahead and multiply by how many plots are *usually* trapped of that treatment
+      # usual.trapping = plot.treatments.trapped %>%
+      #   select(treatment, n) %>%
+      #   group_by(treatment) %>%
+      #   summarize(usual.n = ceiling(mean(n))) %>%
+>>>>>>> bdad4df91cbbab2d1aa1c0c442a03791c656570f
       #   ungroup()
       #
       # abundances = abundances %>%
       #   left_join(usual.trapping, by = 'treatment') %>%
+<<<<<<< HEAD
       #   mutate(abundance.adj = round(abundance.perplot * usual.n))
+=======
+      #   mutate(abundance.adj = round(abundance.perplot * usual.n)) %>%
+      #   select()
+>>>>>>> bdad4df91cbbab2d1aa1c0c442a03791c656570f
     }
   }
 
@@ -144,12 +157,16 @@ abundance.adjustable <- function(path = '~', level="Site",type="Rodents", adj = 
         dplyr::select(period,species=x.Var1, abundance=x.Freq) %>%
         dplyr::left_join(plot.trapped, by = c('period')) %>%
         dplyr::mutate(abundance.perplot = abundance / n)
+<<<<<<< HEAD
 
       # Potential to multiply by how many plots are "usually" trapped
       # usual.n = round(mean(plot.trapped$n))
       #  abundances = abundances %>%
       #    mutate(abundance.adj = round(abundance.perplot * usual.n))
        }
+=======
+    }
+>>>>>>> bdad4df91cbbab2d1aa1c0c442a03791c656570f
   }
 
 
