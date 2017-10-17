@@ -14,13 +14,12 @@
 #'                  [note that if level="plot" and incomplete=T, NAs will be included in periods where trapping was incomplete]
 #' @param shape return data as a "crosstab" or "flat" list
 #' @param time return data using the complete "newmoon" numbers of the original "period" numbers
-#' @param dates whether or not to return the dates of each census
 #'
 #' @export
 #'
-abundance <- function(path = '~', level="Site",type="Rodents", adj = "T",
+abundance <- function(path = '~', level="Site",type="Rodents", adj = T,
                       length="all",unknowns=F,incomplete=T,
-                      shape="crosstab",time="period", dates = T) {
+                      shape="crosstab",time="period") {
 
   ##########Get Data
   data_tables = loadData(path)
@@ -150,25 +149,28 @@ abundance <- function(path = '~', level="Site",type="Rodents", adj = "T",
     }
   }
 
-
-  if(dates == T) {
-
-    dates = newmoons %>%
-      dplyr::select(period, censusdate) %>%
-      dplyr::filter(period %in% (as.vector(unique(abundances$period))))
-
-    abundances = abundances %>%
-      dplyr::left_join(dates, by = c('period'))
-
-  }
-
-
   ###########Switch to new moon number if time== 'newmoon'------------------
   abundances = add_newmoon_code(abundances, newmoons, time)
 
   ##########Convert data to crosstab ----------------------
   if(shape %in% c("Crosstab","crosstab")){
+    if (adj == F) {
     abundances = make_crosstab(abundances)
+    }
+    if (adj == T) {
+      if (level %in% c("Treatment","treatment")) {
+      abundances = select(abundances, period, treatment, species, abundance.adj)
+      colnames(abundances) = c('period', 'treatment', 'species', 'abundance')
+      abundances = make_crosstab(abundances)
+      }
+
+     if (level %in% c("Site","site")) {
+       abundances = select(abundances, period, species, abundance.adj)
+       colnames(abundances) = c('period', 'species', 'abundance')
+       abundances = make_crosstab(abundances)
+     }
+
+    }
   }
 
   return(abundances)
