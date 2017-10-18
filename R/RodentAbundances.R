@@ -91,7 +91,11 @@ abundance <- function(path = '~', level="Site",type="Rodents", adj = T,
 
       abundances = abundances %>%
         left_join(usual.trapping, by = 'treatment') %>%
-        mutate(abundance.adj = round(abundance.perplot * usual.n))
+        mutate(abundance = round(abundance.perplot * usual.n)) %>%
+        select('period', 'treatment', 'species', 'abundance')
+
+      message("Adjusting raw abundance to number of plots trapped per treatment per session")
+
     }
   }
   ##########Summarise by plot ----------------------------
@@ -133,6 +137,8 @@ abundance <- function(path = '~', level="Site",type="Rodents", adj = T,
         add_count(period) %>%
         distinct(period, n)
 
+      usual.n = round(mean(plot.trapped$n))
+
       abundances = rodents %>%
         dplyr::mutate(species = factor(species)) %>%
         dplyr::group_by(period) %>%
@@ -140,13 +146,12 @@ abundance <- function(path = '~', level="Site",type="Rodents", adj = T,
         dplyr::ungroup() %>%
         dplyr::select(period,species=x.Var1, abundance=x.Freq) %>%
         dplyr::left_join(plot.trapped, by = c('period')) %>%
-        dplyr::mutate(abundance.perplot = abundance / n)
+        dplyr::mutate(abundance.perplot = abundance / n) %>%
+        mutate(abundance = round(abundance.perplot * usual.n)) %>%
+        select('period', 'species', 'abundance')
+      message("Adjusting raw abundance by total number of plots trapped per session")
 
-      # Potential to multiply by how many plots are "usually" trapped
-      usual.n = round(mean(plot.trapped$n))
-      abundances = abundances %>%
-        mutate(abundance.adj = round(abundance.perplot * usual.n))
-    }
+      }
   }
 
   ###########Switch to new moon number if time== 'newmoon'------------------
@@ -154,24 +159,9 @@ abundance <- function(path = '~', level="Site",type="Rodents", adj = T,
 
   ##########Convert data to crosstab ----------------------
   if(shape %in% c("Crosstab","crosstab")){
-    if (adj == F) {
     abundances = make_crosstab(abundances)
-    }
-    if (adj == T) {
-      if (level %in% c("Treatment","treatment")) {
-      abundances = select(abundances, period, treatment, species, abundance.adj)
-      colnames(abundances) = c('period', 'treatment', 'species', 'abundance')
-      abundances = make_crosstab(abundances)
-      }
-
-     if (level %in% c("Site","site")) {
-       abundances = select(abundances, period, species, abundance.adj)
-       colnames(abundances) = c('period', 'species', 'abundance')
-       abundances = make_crosstab(abundances)
-     }
 
     }
-  }
 
   return(abundances)
 }
